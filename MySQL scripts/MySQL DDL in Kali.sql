@@ -1,4 +1,4 @@
-                                                                                                             
+/*                                                                                                             
 ┌──(root㉿kali)-[/home/foxliu]
 └─# mysql -h localhost -u root
 Welcome to the MariaDB monitor.  Commands end with ; or \g.
@@ -160,6 +160,44 @@ Records: 3  Duplicates: 0  Warnings: 0
 MariaDB [50900_db]> ALTER TABLE orderItem ADD CONSTRAINT orderItem_menuItem FOREIGN KEY orderItem_menuItem (MenuItemID) REFERENCES menuItem (ID);
 Query OK, 3 rows affected (0.280 sec)              
 Records: 3  Duplicates: 0  Warnings: 0
+*/
+
+
+-- Connect to the MySQL Server
+mysql -h localhost -u root
+show databases;
+-- Create my DB
+create database 50900_db;
+show databases;
+-- Enter the DB
+use 50900_db;
+-- Create tables and load data into them
+create table cart(ID int, Date date, Price float);
+load data local infile '/home/foxliu/Documents/50900_Project/Data Sources/source2/cart.csv' into table cart fields terminated by ',';
+select * from cart;
+create table customer(Email varchar(30), firstName varchar(20), lastName varchar(20), Password varchar(20), cartID int);
+load data local infile '/home/foxliu/Documents/50900_Project/Data Sources/source2/customer.csv' into table customer fields terminated by ',';
+select * from customer;
+create table menuItem(ID int, Name varchar(40), Price Float, Description Blob, RestaurantID int);
+load data local infile '/home/foxliu/Documents/50900_Project/Data Sources/source2/menuItem.csv' into table menuItem fields terminated by ',';
+select * from menuItem;
+create table orderItem(ID int, Quantity int, Price Float, MenuItemID int, CartID int);
+load data local infile '/home/foxliu/Documents/50900_Project/Data Sources/source2/orderItem.csv' into table orderItem fields terminated by ',';
+select * from orderItem;
+create table restaurant(ID int, Address varchar(60), Name Varchar (40), Phone Varchar (20), ImageURL Blob);
+load data local infile '/home/foxliu/Documents/50900_Project/Data Sources/source2/restaurant.csv' into table restaurant fields terminated by ',';
+select * from restaurant;
+-- Define PKs
+ALTER TABLE cart ADD CONSTRAINT Cart_pk PRIMARY KEY (id);
+ALTER TABLE customer ADD CONSTRAINT Customer_pk PRIMARY KEY (email);
+ALTER TABLE menuItem ADD CONSTRAINT MenuItem_pk PRIMARY KEY (id);
+ALTER TABLE orderItem ADD CONSTRAINT orderItem_pk PRIMARY KEY (id);
+ALTER TABLE restaurant ADD CONSTRAINT restaurant_pk PRIMARY KEY (id);
+-- Define FKs
+ALTER TABLE customer ADD CONSTRAINT customer_cart FOREIGN KEY customer_cart (cartID) REFERENCES cart (id);
+ALTER TABLE menuItem ADD CONSTRAINT menuItem_restaurant FOREIGN KEY menuItem_restaurant (RestaurantID) REFERENCES restaurant (ID);
+ALTER TABLE orderItem ADD CONSTRAINT orderItem_cart FOREIGN KEY orderItem_cart (cartID) REFERENCES cart (id);
+ALTER TABLE orderItem ADD CONSTRAINT orderItem_menuItem FOREIGN KEY orderItem_menuItem (MenuItemID) REFERENCES menuItem (ID);
 
 
 
